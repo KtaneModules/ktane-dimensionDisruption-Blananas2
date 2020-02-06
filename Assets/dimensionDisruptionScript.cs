@@ -13,9 +13,12 @@ public class dimensionDisruptionScript : MonoBehaviour {
     public GameObject[] cubes; // A6i, B6i, C6i ... F6i, A5i, B5i ... F1i, A6ii, B6ii ... F4vi, F5vi, F6vi
     public KMSelectable[] buttons;
     public GameObject[] statusLight; //center, l&r, u&d
-    public Material[] solvedGreens; //dark, light
+    public Material[] lightColors; //dark grey, light grey, dark green, light green, dark red, light red
     public GameObject[] otherLetters;
     public Sprite[] pixelLetters;
+    private Coroutine fuck;
+    public KMSelectable clickableStatusLight;
+    public GameObject block;
 
     //Logging
     static int moduleIdCounter = 1;
@@ -32,9 +35,11 @@ public class dimensionDisruptionScript : MonoBehaviour {
     public int letOne = -1;
     public int letTwo = -1;
     public int letThree = -1;
+    public bool visible = true;
     public List<int> tablePlaces = new List<int> {  };
     public List<int> corners = new List<int> { 0, 1, 2, 3 };
     public List<string> cornerNames = new List<string> { "Top left", "Top right", "Bottom left", "Bottom right" };
+
 
     void Awake () {
         moduleId = moduleIdCounter++;
@@ -42,6 +47,8 @@ public class dimensionDisruptionScript : MonoBehaviour {
             KMSelectable pressedButton = button;
             button.OnInteract += delegate () { buttonPress(pressedButton); return false; };
         }
+
+        clickableStatusLight.OnInteract += delegate () { lightPress(); return false; };
 
     }
 
@@ -88,17 +95,37 @@ public class dimensionDisruptionScript : MonoBehaviour {
                     if (corners[3] == j) {
                         GetComponent<KMBombModule>().HandlePass();
                         Debug.LogFormat("[Dimension Disruption #{0}] {1} button pressed, which is correct. Module solved.", moduleId, cornerNames[j] );
-                        statusLight[0].GetComponent<MeshRenderer>().material = solvedGreens[0];
-                        statusLight[1].GetComponent<MeshRenderer>().material = solvedGreens[1];
-                        statusLight[2].GetComponent<MeshRenderer>().material = solvedGreens[1];
+                        statusLight[0].GetComponent<MeshRenderer>().material = lightColors[2];
+                        statusLight[1].GetComponent<MeshRenderer>().material = lightColors[3];
+                        statusLight[2].GetComponent<MeshRenderer>().material = lightColors[3];
                         moduleSolved = true;
                     } else {
-                    GetComponent<KMBombModule>().HandleStrike();
-                    Debug.LogFormat("[Dimension Disruption #{0}] {1} button pressed, which is incorrect. Module striked.", moduleId, cornerNames[j] );
+                        GetComponent<KMBombModule>().HandleStrike();
+                        Debug.LogFormat("[Dimension Disruption #{0}] {1} button pressed, which is incorrect. Module striked.", moduleId, cornerNames[j] );
+                        statusLight[0].GetComponent<MeshRenderer>().material = lightColors[4];
+                        statusLight[1].GetComponent<MeshRenderer>().material = lightColors[5];
+                        statusLight[2].GetComponent<MeshRenderer>().material = lightColors[5];
+                        fuck = StartCoroutine(godDamn());
                     }
                 }
             }
         }
+    }
+
+    void lightPress() {
+        if (visible) {
+            block.transform.localScale = new Vector3(0, 0, 0);
+        } else {
+            block.transform.localScale = new Vector3(1, 1, 1);
+        }
+        visible = !visible;
+    }
+
+    IEnumerator godDamn() {
+            yield return new WaitForSeconds(1);
+            statusLight[0].GetComponent<MeshRenderer>().material = lightColors[0];
+            statusLight[1].GetComponent<MeshRenderer>().material = lightColors[1];
+            statusLight[2].GetComponent<MeshRenderer>().material = lightColors[1];
     }
 
 }
