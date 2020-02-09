@@ -17,6 +17,6 @@ MonoBehaviour:
   description: "\u201CUh\u2026 Jim! The guy who makes the icons for us suddenly got
     into our warehouse!\u201D\n\nModule ID: dimensionDisruption\nThe manual can be
     found here: https://ktane.timwi.de/HTML/Dimension%20Disruption.html"
-  version: 1.0
+  version: 1.2
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 0791721a8e903584a81a2c864c79b789, type: 3}
