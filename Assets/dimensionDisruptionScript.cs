@@ -21,6 +21,7 @@ public class dimensionDisruptionScript : MonoBehaviour {
     public KMSelectable clickableStatusLight;
     public GameObject block;
     public GameObject blockRotater;
+    public Material blockColor;
     private bool animating = false;
 
     //Logging
@@ -42,9 +43,26 @@ public class dimensionDisruptionScript : MonoBehaviour {
     private List<int> corners = new List<int> { 0, 1, 2, 3 };
     private List<string> cornerNames = new List<string> { "Top Left", "Top Right", "Bottom Left", "Bottom Right" };
 
+    private DimensionDisruptionSettings Settings = new DimensionDisruptionSettings();
+    int BlockRed, BlockGreen, BlockBlue;
 
-    void Awake () {
-        moduleId = moduleIdCounter++;
+    void Awake ()
+    {
+       moduleId = moduleIdCounter++;
+
+       ModConfig<DimensionDisruptionSettings> modConfig = new ModConfig<DimensionDisruptionSettings>("DimensionDisruptionSettings");
+       //Read from the settings file, or create one if one doesn't exist
+       Settings = modConfig.Settings;
+       //Update the settings file incase there was an error during read
+       modConfig.Settings = Settings;
+       if (BlockRed < 0) { BlockRed *= -1; }
+       if (BlockGreen < 0) { BlockGreen *= -1; }
+       if (BlockBlue < 0) { BlockBlue *= -1; }
+       BlockRed = BlockRed % 256;
+       BlockGreen = BlockGreen % 256;
+       BlockBlue = BlockBlue % 256;
+       Debug.LogFormat("<Dimension Disruption #{0}> BlockRed: {1}, BlockGreen: {2}, BlockBlue: {3}", moduleId, Settings.BlockRed, Settings.BlockGreen, Settings.BlockBlue);
+
         foreach (KMSelectable button in buttons) {
             KMSelectable pressedButton = button;
             button.OnInteract += delegate () { buttonPress(pressedButton); return false; };
@@ -101,6 +119,7 @@ public class dimensionDisruptionScript : MonoBehaviour {
             }
             else
             {
+                blockColor.color = new Color((float) BlockRed/255, (float) BlockGreen/255, (float) BlockBlue/255);
                 continue;
             }
         }
@@ -259,7 +278,6 @@ public class dimensionDisruptionScript : MonoBehaviour {
             while (animating)
             {
                 yield return "trycancel Halted focus on rotating cube due to a request to cancel!";
-                yield return new WaitForSeconds(0.01f);
             }
             yield break;
         }
@@ -270,5 +288,38 @@ public class dimensionDisruptionScript : MonoBehaviour {
         buttons[corners[3]].OnInteract();
         yield return new WaitForSeconds(0.1f);
     }
+
+    class DimensionDisruptionSettings
+    {
+        public int BlockRed = 0;
+        public int BlockGreen = 0;
+        public int BlockBlue = 0;
+    }
+
+    static Dictionary<string, object>[] TweaksEditorSettings = new Dictionary<string, object>[]
+    {
+        new Dictionary<string, object>
+        {
+            { "Filename", "DimensionDisruptionSettings.json" },
+            { "Name", "Dimension Disruption Settings" },
+            { "Listing", new List<Dictionary<string, object>>{
+                new Dictionary<string, object>
+                {
+                    { "Key", "BlockRed" },
+                    { "Text", "The red integer value for the color of the block structure." }
+                },
+                new Dictionary<string, object>
+                {
+                    { "Key", "BlockGreen" },
+                    { "Text", "The green integer value for the color of the block structure." }
+                },
+                new Dictionary<string, object>
+                {
+                    { "Key", "BlockBlue" },
+                    { "Text", "The blue integer value for the color of the block structure." }
+                },
+            } }
+        }
+    };
 
 }
