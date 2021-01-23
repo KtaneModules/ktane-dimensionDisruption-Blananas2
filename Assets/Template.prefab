@@ -18673,13 +18673,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
   Children:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 114009869519715978}
   - {fileID: 114698921261459028}
   - {fileID: 114922983145921680}
+  - {fileID: 0}
   - {fileID: 114972908164606180}
   - {fileID: 114817759526033216}
-  - {fileID: 114009869519715978}
+  - {fileID: 0}
   IsPassThrough: 0
-  ChildRowLength: 0
+  ChildRowLength: 3
   Highlight: {fileID: 114570430299588062}
   SelectableColliders: []
   DefaultSelectableIndex: 0
@@ -19043,6 +19047,7 @@ MonoBehaviour:
   clickableStatusLight: {fileID: 114009869519715978}
   block: {fileID: 1557847245503148}
   blockRotater: {fileID: 1358961042107290}
+  blockColor: {fileID: 2100000, guid: a4577c4785ece3f45b9b7dc29aa1da5e, type: 2}
 --- !u!114 &114162659387367752
 MonoBehaviour:
   m_ObjectHideFlags: 1
