@@ -21,7 +21,7 @@ public class dimensionDisruptionScript : MonoBehaviour {
     public KMSelectable clickableStatusLight;
     public GameObject block;
     public GameObject blockRotater;
-    public Material blockColor;
+    public Material[] blockColors;
     private bool animating = false;
 
     //Logging
@@ -42,9 +42,13 @@ public class dimensionDisruptionScript : MonoBehaviour {
     private List<int> tablePlaces = new List<int> {  };
     private List<int> corners = new List<int> { 0, 1, 2, 3 };
     private List<string> cornerNames = new List<string> { "Top Left", "Top Right", "Bottom Left", "Bottom Right" };
+    private string checker = "";
+    //private bool broken;
+    //private int attempts = 1;
 
     private DimensionDisruptionSettings Settings = new DimensionDisruptionSettings();
-    int BlockRed, BlockGreen, BlockBlue;
+    private string chosenColor;
+    private int colorIx;
 
     void Awake ()
     {
@@ -55,13 +59,18 @@ public class dimensionDisruptionScript : MonoBehaviour {
        Settings = modConfig.Settings;
        //Update the settings file incase there was an error during read
        modConfig.Settings = Settings;
-       if (BlockRed < 0) { BlockRed *= -1; }
-       if (BlockGreen < 0) { BlockGreen *= -1; }
-       if (BlockBlue < 0) { BlockBlue *= -1; }
-       BlockRed = BlockRed % 256;
-       BlockGreen = BlockGreen % 256;
-       BlockBlue = BlockBlue % 256;
-       Debug.LogFormat("<Dimension Disruption #{0}> BlockRed: {1}, BlockGreen: {2}, BlockBlue: {3}", moduleId, Settings.BlockRed, Settings.BlockGreen, Settings.BlockBlue);
+       chosenColor = Settings.TheColor.ToString().ToUpper() + " ";
+        switch (chosenColor[0]) {
+            case 'B': colorIx = 1; Debug.LogFormat("<Dimension Disruption #{0}> Blue chosen as the color.", moduleId); break;
+            case 'G': colorIx = 2; Debug.LogFormat("<Dimension Disruption #{0}> Green chosen as the color.", moduleId); break;
+            case 'C': colorIx = 3; Debug.LogFormat("<Dimension Disruption #{0}> Cyan chosen as the color.", moduleId); break;
+            case 'R': colorIx = 4; Debug.LogFormat("<Dimension Disruption #{0}> Red chosen as the color.", moduleId); break;
+            case 'M': colorIx = 5; Debug.LogFormat("<Dimension Disruption #{0}> Magenta chosen as the color.", moduleId); break;
+            case 'Y': colorIx = 6; Debug.LogFormat("<Dimension Disruption #{0}> Yellow chosen as the color.", moduleId); break;
+            case 'W': colorIx = 7; Debug.LogFormat("<Dimension Disruption #{0}> White chosen as the color.", moduleId); break;
+            case '?': colorIx = UnityEngine.Random.Range(0,8); Debug.LogFormat("<Dimension Disruption #{0}> Chosen at random: {1}", moduleId, "KBGCRMYW"[colorIx]); break;
+            default: colorIx = 0; Debug.LogFormat("<Dimension Disruption #{0}> {1} Black chosen as the color.", moduleId, chosenColor[0]); break;
+        }
 
         foreach (KMSelectable button in buttons) {
             KMSelectable pressedButton = button;
@@ -69,12 +78,12 @@ public class dimensionDisruptionScript : MonoBehaviour {
         }
 
         clickableStatusLight.OnInteract += delegate () { lightPress(); return false; };
-
-        GetComponent<KMBombModule>().OnActivate += OnActivate;
     }
 
     // Use this for initialization
     void Start () {
+        TryAgain:
+        checker = "";
         tablePlaces.Add(UnityEngine.Random.Range(0, 36));
         horiz = (UnityEngine.Random.Range(0, 5)) + 1;
         verti = (UnityEngine.Random.Range(0, 5)) + 1;
@@ -98,6 +107,29 @@ public class dimensionDisruptionScript : MonoBehaviour {
         otherLetters[1].GetComponent<SpriteRenderer>().sprite = pixelLetters[letTwo];
         otherLetters[2].GetComponent<SpriteRenderer>().sprite = pixelLetters[letThree];
 
+        for (int i = 0; i < 216; i++)
+        {
+            if ((letterPatterns[letOne][cubePlaces[i * 3]] == '.' || letterPatterns[letTwo][cubePlaces[(i * 3) + 1]] == '.') || letterPatterns[letThree][cubePlaces[(i * 3) + 2]] == '.')
+            {
+                cubes[i].SetActive(false);
+                checker += "_";
+            }
+            else
+            {
+                cubes[i].SetActive(true);
+                cubes[i].GetComponent<MeshRenderer>().material = blockColors[colorIx];
+                checker += "#";
+            }
+        }
+
+        /*
+        broken = TheAlgorithmUsedToDetermineIfTheClosenLettersAreBroken();
+        Debug.Log("Broken: " + broken);
+        if (broken) {
+            attempts++;
+            goto TryAgain;
+        }*/
+
         Debug.LogFormat("[Dimension Disruption #{0}] Chosen letters: {1}, {2}, {3}.", moduleId, alphabet[letOne], alphabet[letTwo], alphabet[letThree]);
 
         for(int i = 0; i < 4; i++)
@@ -107,23 +139,33 @@ public class dimensionDisruptionScript : MonoBehaviour {
                 Debug.LogFormat("[Dimension Disruption #{0}] The missing rectangle corner is in the {1} position", moduleId, cornerNames[i]);
             }
         }
+
+        //Debug.LogFormat("<Dimension Disruption #{0}> Attempts: {1}", moduleId, attempts);
 	}
 
-    void OnActivate()
-    {
-        for (int i = 0; i < 216; i++)
-        {
-            if ((letterPatterns[letOne][cubePlaces[i * 3]] == '.' || letterPatterns[letTwo][cubePlaces[(i * 3) + 1]] == '.') || letterPatterns[letThree][cubePlaces[(i * 3) + 2]] == '.')
-            {
-                cubes[i].SetActive(false);
-            }
-            else
-            {
-                blockColor.color = new Color((float) BlockRed/255, (float) BlockGreen/255, (float) BlockBlue/255);
-                continue;
+    /*
+    bool TheAlgorithmUsedToDetermineIfTheClosenLettersAreBroken() {
+        List<int> thingOne = new List<int> { 30, 31, 32, 33, 34, 35, 24, 25, 26, 27, 28, 29, 18, 19, 20, 21, 22, 23, 12, 13, 14, 15, 16, 17, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5 };
+        for (int a = 0; a < 36; a++) {
+            if (((checker[thingOne[a]] + checker[thingOne[a] + 36] + checker[thingOne[a] + 72] + checker[thingOne[a] + 108] + checker[thingOne[a] + 144] + checker[thingOne[a] + 180]).ToString() == "______") && letterPatterns[letOne] != ".") {
+                return true;
             }
         }
+        List<int> thingTwo = new List<int> { 0,	1, 2, 3, 4, 5, 36, 37, 38, 39, 40, 41, 72, 73, 74, 75, 76, 77, 108, 109, 110, 111, 112, 113, 144, 145, 146, 147, 148, 149, 180, 181, 182, 183, 184, 185 };
+        for (int b = 0; b < 36; b++) {
+            if (((checker[thingTwo[b]] + checker[thingTwo[b] + 6] + checker[thingTwo[b] + 12] + checker[thingTwo[b] + 18] + checker[thingTwo[b] + 24] + checker[thingTwo[b] + 30]).ToString() == "______") && letterPatterns[letTwo] != ".") {
+                return true;
+            }
+        }
+        List<int> thingThree = new List<int> { 180, 186, 192, 198, 204, 210, 144, 150, 156, 162, 168, 174, 108, 114, 120, 126, 132, 138, 72, 78, 84, 90, 96, 102, 36, 42, 48, 54, 60, 66, 0, 6, 12, 18, 24, 30 };
+        for (int c = 0; c < 36; c++) {
+            if (((checker[thingThree[c]] + checker[thingThree[c] + 1] + checker[thingThree[c] + 2] + checker[thingThree[c] + 3] + checker[thingThree[c] + 4] + checker[thingThree[c] + 5]).ToString() == "______") && letterPatterns[letThree] != ".") {
+                return true;
+            }
+        }
+        return false;
     }
+    */
 
     void buttonPress(KMSelectable button) {
         if (!moduleSolved) {
@@ -291,9 +333,7 @@ public class dimensionDisruptionScript : MonoBehaviour {
 
     class DimensionDisruptionSettings
     {
-        public int BlockRed = 0;
-        public int BlockGreen = 0;
-        public int BlockBlue = 0;
+        public string TheColor = "K";
     }
 
     static Dictionary<string, object>[] TweaksEditorSettings = new Dictionary<string, object>[]
@@ -305,19 +345,9 @@ public class dimensionDisruptionScript : MonoBehaviour {
             { "Listing", new List<Dictionary<string, object>>{
                 new Dictionary<string, object>
                 {
-                    { "Key", "BlockRed" },
-                    { "Text", "The red integer value for the color of the block structure." }
-                },
-                new Dictionary<string, object>
-                {
-                    { "Key", "BlockGreen" },
-                    { "Text", "The green integer value for the color of the block structure." }
-                },
-                new Dictionary<string, object>
-                {
-                    { "Key", "BlockBlue" },
-                    { "Text", "The blue integer value for the color of the block structure." }
-                },
+                    { "Key", "TheColor" },
+                    { "Text", "Color of block structure, represented by a letter. Options are: ?KBGCRMYW" }
+                }
             } }
         }
     };

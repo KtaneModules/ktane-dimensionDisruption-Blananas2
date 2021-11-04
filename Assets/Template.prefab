@@ -19047,7 +19047,15 @@ MonoBehaviour:
   clickableStatusLight: {fileID: 114009869519715978}
   block: {fileID: 1557847245503148}
   blockRotater: {fileID: 1358961042107290}
-  blockColor: {fileID: 2100000, guid: a4577c4785ece3f45b9b7dc29aa1da5e, type: 2}
+  blockColors:
+  - {fileID: 2100000, guid: a4577c4785ece3f45b9b7dc29aa1da5e, type: 2}
+  - {fileID: 2100000, guid: 9e81ab3240fc483479590e43e073b855, type: 2}
+  - {fileID: 2100000, guid: 5434b89deadd4244f92b882118016344, type: 2}
+  - {fileID: 2100000, guid: e7b9f81849762b540a9da045661f0c5e, type: 2}
+  - {fileID: 2100000, guid: de08ad7335b57b04780180c93e25562a, type: 2}
+  - {fileID: 2100000, guid: 28580d6bcb57a4f4c85358e2c1d5d952, type: 2}
+  - {fileID: 2100000, guid: 2bfd7bf73f6e34d4394214d45d6e9fe7, type: 2}
+  - {fileID: 2100000, guid: 4ebde5f14d5fc714fb30f763722f2d31, type: 2}
 --- !u!114 &114162659387367752
 MonoBehaviour:
   m_ObjectHideFlags: 1
