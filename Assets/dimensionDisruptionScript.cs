@@ -54,12 +54,12 @@ public class dimensionDisruptionScript : MonoBehaviour {
     {
        moduleId = moduleIdCounter++;
 
-       ModConfig<DimensionDisruptionSettings> modConfig = new ModConfig<DimensionDisruptionSettings>("DimensionDisruptionSettings");
-       //Read from the settings file, or create one if one doesn't exist
-       Settings = modConfig.Settings;
-       //Update the settings file incase there was an error during read
-       modConfig.Settings = Settings;
-       chosenColor = Settings.TheColor.ToString().ToUpper() + " ";
+        ModConfig<DimensionDisruptionSettings> modConfig = new ModConfig<DimensionDisruptionSettings>("DimensionDisruptionSettings");
+        //Read from the settings file, or create one if one doesn't exist
+        Settings = modConfig.Settings;
+        //Update the settings file incase there was an error during read
+        modConfig.Settings = Settings;
+        chosenColor = Settings.TheColor.ToString().ToUpper() + " ";
         switch (chosenColor[0]) {
             case 'B': colorIx = 1; Debug.LogFormat("<Dimension Disruption #{0}> Blue chosen as the color.", moduleId); break;
             case 'G': colorIx = 2; Debug.LogFormat("<Dimension Disruption #{0}> Green chosen as the color.", moduleId); break;
@@ -69,7 +69,7 @@ public class dimensionDisruptionScript : MonoBehaviour {
             case 'Y': colorIx = 6; Debug.LogFormat("<Dimension Disruption #{0}> Yellow chosen as the color.", moduleId); break;
             case 'W': colorIx = 7; Debug.LogFormat("<Dimension Disruption #{0}> White chosen as the color.", moduleId); break;
             case '?': colorIx = UnityEngine.Random.Range(0,8); Debug.LogFormat("<Dimension Disruption #{0}> Chosen at random: {1}", moduleId, "KBGCRMYW"[colorIx]); break;
-            default: colorIx = 0; Debug.LogFormat("<Dimension Disruption #{0}> {1} Black chosen as the color.", moduleId, chosenColor[0]); break;
+            default: colorIx = 0; Debug.LogFormat("<Dimension Disruption #{0}> Black chosen as the color.", moduleId); break;
         }
 
         foreach (KMSelectable button in buttons) {
@@ -103,9 +103,9 @@ public class dimensionDisruptionScript : MonoBehaviour {
         letTwo = alphabet.IndexOf(table[tablePlaces[corners[1]]]);
         letThree = alphabet.IndexOf(table[tablePlaces[corners[2]]]);
 
-        otherLetters[0].GetComponent<SpriteRenderer>().sprite = pixelLetters[letOne];
-        otherLetters[1].GetComponent<SpriteRenderer>().sprite = pixelLetters[letTwo];
-        otherLetters[2].GetComponent<SpriteRenderer>().sprite = pixelLetters[letThree];
+        otherLetters[0].GetComponent<SpriteRenderer>().sprite = pixelLetters[letOne + colorIx*36];
+        otherLetters[1].GetComponent<SpriteRenderer>().sprite = pixelLetters[letTwo + colorIx*36];
+        otherLetters[2].GetComponent<SpriteRenderer>().sprite = pixelLetters[letThree + colorIx*36];
 
         for (int i = 0; i < 216; i++)
         {
