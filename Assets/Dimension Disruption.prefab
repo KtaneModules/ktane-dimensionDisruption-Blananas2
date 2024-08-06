@@ -3125,6 +3125,7 @@ GameObject:
   - component: {fileID: 114853960920223876}
   - component: {fileID: 114139553842080666}
   - component: {fileID: 114154635758505134}
+  - component: {fileID: 114236954339228798}
   m_Layer: 0
   m_Name: Dimension Disruption
   m_TagString: Untagged
@@ -18769,6 +18770,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Bomb: {fileID: 114454383462897410}
   Audio: {fileID: 114915473299363512}
+  RuleSeedable: {fileID: 114236954339228798}
   cubes:
   - {fileID: 1011441003416216}
   - {fileID: 1711878927799412}
@@ -19607,6 +19609,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - KT/Mobile/DiffuseTint
+--- !u!114 &114236954339228798
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1676409040304040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf69c2de51bd3c43bbd9bc22578ee08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _seed: 1
 --- !u!114 &114237163627489540
 MonoBehaviour:
   m_ObjectHideFlags: 1
